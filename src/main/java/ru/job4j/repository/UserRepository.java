@@ -22,6 +22,8 @@ public class UserRepository {
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
+        } finally {
+            session.close();
         }
         return user;
     }
@@ -38,6 +40,8 @@ public class UserRepository {
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
+        } finally {
+            session.close();
         }
     }
 
@@ -51,33 +55,51 @@ public class UserRepository {
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
+        } finally {
+            session.close();
         }
     }
 
     public List<User> findAllOrderById() {
         Session session = sessionFactory.openSession();
-        Query<User> query = session.createQuery("FROM User", User.class);
-        return query.list();
+        try {
+            Query<User> query = session.createQuery("FROM User", User.class);
+            return query.list();
+        } finally {
+            session.close();
+        }
     }
 
     public Optional<User> findById(Integer userId) {
         Session session = sessionFactory.openSession();
-        Query<User> query = session.createQuery("FROM User u WHERE u.id = :id", User.class)
-                        .setParameter("id", userId);
-        return Optional.ofNullable(query.uniqueResult());
+        try {
+            Query<User> query = session.createQuery("FROM User u WHERE u.id = :id", User.class)
+                    .setParameter("id", userId);
+            return Optional.ofNullable(query.uniqueResult());
+        } finally {
+            session.close();
+        }
     }
 
     public List<User> findByLikeLogin(String key) {
         Session session = sessionFactory.openSession();
-        Query<User> query = session.createQuery("FROM User u WHERE u.login LIKE :key", User.class)
-                        .setParameter("key", "%" + key + "%");
-        return query.list();
+        try {
+            Query<User> query = session.createQuery("FROM User u WHERE u.login LIKE :key", User.class)
+                    .setParameter("key", "%" + key + "%");
+            return query.list();
+        } finally {
+            session.close();
+        }
     }
 
     public List<User> findByLogin(String login) {
         Session session = sessionFactory.openSession();
-        Query<User> query = session.createQuery("FROM User u WHERE u.login = :login", User.class)
-                        .setParameter("login", login);
-        return query.list();
+        try {
+            Query<User> query = session.createQuery("FROM User u WHERE u.login = :login", User.class)
+                    .setParameter("login", login);
+            return query.list();
+        } finally {
+            session.close();
+        }
     }
 }
