@@ -3,7 +3,7 @@ package ru.job4j.cars.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -17,6 +17,6 @@ public class PriceHistory {
 
     private Long after;
 
-    private Timestamp created;
+    private LocalDateTime created;
 
 }
