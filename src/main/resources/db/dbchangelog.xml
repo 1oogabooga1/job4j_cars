@@ -18,4 +18,6 @@
     <include file="db/scripts/008_ddl_create_table_car.sql"/>
     <include file="db/scripts/009_ddl_create_table_history_owner.sql"/>
     <include file="db/scripts/010_ddl_create_table_history.sql"/>
+    <include file="db/scripts/011_dml_alter_table_post_add_new_columns.sql"/>
+    <include file="db/scripts/012_dml_alter_table_car_add_column_car_model.sql"/>
 </databaseChangeLog>

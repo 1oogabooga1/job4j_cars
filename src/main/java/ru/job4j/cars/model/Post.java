@@ -19,6 +19,12 @@ public class Post {
 
     private Timestamp created;
 
+    private String photo;
+
+    @ManyToOne
+    @JoinColumn(name = "car_id")
+    private Car car;
+
     @ManyToOne
     @JoinColumn(name = "auto_user_id")
     private User user;
