@@ -13,5 +13,9 @@
     <include file="db/scripts/003_dml_insert_auto_user.sql"/>
     <include file="db/scripts/004_ddl_add_table_price_history.sql"/>
     <include file="db/scripts/005_ddl_create_table_participates.sql"/>
-
+    <include file="db/scripts/006_ddl_create_table_engine.sql"/>
+    <include file="db/scripts/007_ddl_create_table_owners.sql"/>
+    <include file="db/scripts/008_ddl_create_table_car.sql"/>
+    <include file="db/scripts/009_ddl_create_table_history_owner.sql"/>
+    <include file="db/scripts/010_ddl_create_table_history.sql"/>
 </databaseChangeLog>
