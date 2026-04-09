@@ -1,1 +1,0 @@
-ALTER TABLE car ADD COLUMN car_model TEXT;

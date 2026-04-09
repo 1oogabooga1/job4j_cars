@@ -61,7 +61,7 @@ public class HblPostRepository implements PostRepository {
 
             root.fetch("car", JoinType.LEFT);
             query.select(root)
-                    .where(criteriaBuilder.equal(root.get("car").get("carModel"), carModel))
+                    .where(criteriaBuilder.equal(root.get("car").get("brand"), carModel))
                     .distinct(true);
 
             Query<Post> sessionQuery = session.createQuery(query);

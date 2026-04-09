@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS photo (
+id SERIAL PRIMARY KEY,
+name TEXT,
+path TEXT
+)

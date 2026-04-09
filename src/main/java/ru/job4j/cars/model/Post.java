@@ -19,7 +19,9 @@ public class Post {
 
     private Timestamp created;
 
-    private String photo;
+    @ManyToOne
+    @JoinColumn(name = "photo_id")
+    private Photo photo;
 
     @ManyToOne
     @JoinColumn(name = "car_id")

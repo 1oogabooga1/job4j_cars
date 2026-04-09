@@ -18,6 +18,8 @@
     <include file="db/scripts/008_ddl_create_table_car.sql"/>
     <include file="db/scripts/009_ddl_create_table_history_owner.sql"/>
     <include file="db/scripts/010_ddl_create_table_history.sql"/>
-    <include file="db/scripts/011_dml_alter_table_post_add_new_columns.sql"/>
-    <include file="db/scripts/012_dml_alter_table_car_add_column_car_model.sql"/>
+    <include file="db/scripts/011_ddl_create_table_photo.sql"/>
+    <include file="db/scripts/012_ddl_create_table_brand.sql"/>
+    <include file="db/scripts/013_dml_alter_table_post_add_new_columns.sql"/>
+    <include file="db/scripts/014_dml_alter_table_car_add_column_brand_id.sql"/>
 </databaseChangeLog>
