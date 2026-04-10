@@ -17,6 +17,6 @@ public class HblOwnerRepository implements OwnerRepository {
     public Optional<Owner> getById(int id) {
         return crudRepository.optional("FROM Owner WHERE id = :id",
                 Owner.class,
-                Map.of(":id", id));
+                Map.of("id", id));
     }
 }

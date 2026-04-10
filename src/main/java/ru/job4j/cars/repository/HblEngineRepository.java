@@ -17,6 +17,6 @@ public class HblEngineRepository implements EngineRepository {
     public Optional<Engine> getById(int id) {
         return crudRepository.optional("From Engine WHERE id = :id",
                 Engine.class,
-                Map.of(":id", id));
+                Map.of("id", id));
     }
 }

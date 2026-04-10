@@ -23,6 +23,6 @@ public class HblCarRepository implements CarRepository {
     public Optional<Car> getById(int id) {
         return crudRepository.optional("From Car WHERE id = :id",
                 Car.class,
-                Map.of(":id", id));
+                Map.of("id", id));
     }
 }
