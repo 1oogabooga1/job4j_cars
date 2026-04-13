@@ -30,7 +30,8 @@ public class HblPostRepository implements PostRepository {
 
             Timestamp lastDay = Timestamp.valueOf(LocalDateTime.now().minusDays(1));
             criteriaQuery.select(root)
-                    .where(criteriaBuilder.greaterThanOrEqualTo(root.get("created"), lastDay));
+                    .where(criteriaBuilder.greaterThanOrEqualTo(root.get("created"), lastDay))
+                    .distinct(true);
 
             Query<Post> sessionQuery = session.createQuery(criteriaQuery);
             return sessionQuery.getResultList();
@@ -43,7 +44,7 @@ public class HblPostRepository implements PostRepository {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Post> criteriaQuery = criteriaBuilder.createQuery(Post.class);
             Root<Post> root = criteriaQuery.from(Post.class);
-
+            root.fetch("car");
             criteriaQuery.select(root)
                     .where(criteriaBuilder.isNotNull(root.get("photo")))
                     .distinct(true);
@@ -61,7 +62,7 @@ public class HblPostRepository implements PostRepository {
 
             root.fetch("car", JoinType.LEFT);
             query.select(root)
-                    .where(criteriaBuilder.equal(root.get("car").get("brand"), carModel))
+                    .where(criteriaBuilder.equal(root.get("car").get("brand").get("name"), carModel))
                     .distinct(true);
 
             Query<Post> sessionQuery = session.createQuery(query);

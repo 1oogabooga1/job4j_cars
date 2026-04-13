@@ -16,12 +16,12 @@ public class HblCarRepository implements CarRepository {
 
     @Override
     public List<Car> getAll() {
-        return crudRepository.query("FROM Car", Car.class);
+        return crudRepository.query("SELECT DISTINCT c FROM Car c LEFT JOIN FETCH c.owners", Car.class);
     }
 
     @Override
     public Optional<Car> getById(int id) {
-        return crudRepository.optional("From Car WHERE id = :id",
+        return crudRepository.optional("SELECT DISTINCT c From Car c LEFT JOIN FETCH c.owners WHERE c.id = :id",
                 Car.class,
                 Map.of("id", id));
     }
