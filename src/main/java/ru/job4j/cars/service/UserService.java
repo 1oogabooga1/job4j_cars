@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    User create(User user);
+    Optional<User> create(User user);
 
     void update(User user);
 
@@ -20,4 +20,6 @@ public interface UserService {
     List<User> findByLikeLogin(String key);
 
     Optional<User> findByLogin(String login);
+
+    Optional<User> findByLoginAndPassword(User user);
 }

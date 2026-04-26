@@ -22,4 +22,12 @@
     <include file="db/scripts/012_ddl_create_table_brand.sql"/>
     <include file="db/scripts/013_dml_alter_table_post_add_new_columns.sql"/>
     <include file="db/scripts/014_dml_alter_table_car_add_column_brand_id.sql"/>
+    <include file="db/scripts/015_dml_alter_table_auto_user_add_column_name.sql"/>
+    <include file="db/scripts/016_dml_alter_table_post_edit_column_created.sql"/>
+    <include file="db/scripts/017_dml_alter_table_post_add_column_sold.sql"/>
+    <include file="db/scripts/018_dml_insert_into_brand.sql"/>
+    <include file="db/scripts/019_dml_alter_table_engine_add_column_name.sql"/>
+    <include file="db/scripts/020_dml_alter_table_owners_add_column_user_id.sql"/>
+    <include file="db/scripts/021_dml_insert_into_engines.sql"/>
+    <include file="db/scripts/022_dml_alter_table_car_edit_column_engine_id.sql"/>
 </databaseChangeLog>

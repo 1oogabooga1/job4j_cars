@@ -15,7 +15,7 @@ public class SimpleUserService implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User create(User user) {
+    public Optional<User> create(User user) {
         return userRepository.create(user);
     }
 
@@ -47,5 +47,10 @@ public class SimpleUserService implements UserService {
     @Override
     public Optional<User> findByLogin(String login) {
         return userRepository.findByLogin(login);
+    }
+
+    @Override
+    public Optional<User> findByLoginAndPassword(User user) {
+        return userRepository.findByPasswordAndLogin(user);
     }
 }

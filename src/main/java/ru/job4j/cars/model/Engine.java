@@ -16,4 +16,6 @@ public class Engine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Integer id;
+
+    private String name;
 }

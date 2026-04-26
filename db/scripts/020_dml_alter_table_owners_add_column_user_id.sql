@@ -1,0 +1,1 @@
+ALTER TABLE owners ADD COLUMN user_id INT REFERENCES auto_user(id);

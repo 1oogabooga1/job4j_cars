@@ -1,0 +1,1 @@
+ALTER TABLE car DROP CONSTRAINT car_engine_id_key;

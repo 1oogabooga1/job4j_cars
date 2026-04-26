@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container mt-4">
+    <h2>Posts For the Last Day</h2>
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Photo</th>
+                <th scope="col">Car Brand</th>
+                <th scope="col">Engine Type</th>
+                <th scope="col">Owner name</th>
+                <th scope="col">Created</th>
+                <th scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${postsForTheLastDay}">
+                <td th:text="${post.id}"></td>
+                <td>
+                    <img th:src="@{/files/{photoId}(photoId=${post.photo.id})}"
+                         alt="photo"
+                         style="width:150px; height:auto; margin-right:30px;">
+                </td>
+                <td> <a th:text="${post.car.brand.name}"
+                        th:href="@{/posts/{postId}(postId=${post.id})}"></a> </td>
+                <td th:text="${post.car.engine.name}"></td>
+                <td th:text="${post.user.name}"></td>
+                <td th:text="${#temporals.format(post.created, 'dd.MM.yyyy HH:mm')}"></td>
+                <td th:text="${post.sold} ? 'Sold' : 'In stock'"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-3">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-end">
+                <a th:href="@{/posts/create}" class="btn btn-primary">Create new post</a>
+            </div>
+        </div>
+    </div>
+    <footer th:include="fragments/footer :: footer"></footer>
+</div>

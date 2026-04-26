@@ -15,6 +15,12 @@ public class HblCarRepository implements CarRepository {
     private final CrudRepository crudRepository;
 
     @Override
+    public Car save(Car car) {
+        crudRepository.run(session -> session.save(car));
+        return car;
+    }
+
+    @Override
     public List<Car> getAll() {
         return crudRepository.query("SELECT DISTINCT c FROM Car c LEFT JOIN FETCH c.owners", Car.class);
     }

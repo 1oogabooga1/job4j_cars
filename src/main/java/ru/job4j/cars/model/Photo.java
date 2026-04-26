@@ -1,8 +1,6 @@
 package ru.job4j.cars.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -20,4 +18,12 @@ public class Photo {
     private String name;
 
     private String path;
+
+    public Photo() {
+    }
+
+    public Photo(String name, String path) {
+        this.name = name;
+        this.path = path;
+    }
 }

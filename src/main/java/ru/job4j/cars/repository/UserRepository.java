@@ -17,9 +17,9 @@ public class UserRepository {
      * @param user пользователь.
      * @return пользователь с id.
      */
-    public User create(User user) {
-        crudRepository.run(session -> session.persist(user));
-        return user;
+    public Optional<User> create(User user) {
+        crudRepository.run(session -> session.save(user));
+        return Optional.of(user);
     }
 
     /**
@@ -82,5 +82,10 @@ public class UserRepository {
                 "FROM User WHERE login = :fLogin", User.class,
                 Map.of("fLogin", login)
         );
+    }
+
+    public Optional<User> findByPasswordAndLogin(User user) {
+        return crudRepository.optional("FROM User WHERE login = :login AND password = :password",
+                User.class, Map.of("login", user.getLogin(), "password", user.getPassword()));
     }
 }

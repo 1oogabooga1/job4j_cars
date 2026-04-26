@@ -79,13 +79,13 @@ class HblPostRepositoryTest {
         Post post = new Post();
         post.setCar(car);
         post.setPhoto(photo);
-        post.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        post.setCreated(LocalDateTime.now());
         post.setDescription("description");
         save(post);
 
         assertThat(postRepository.showPostsForTheLastDay()).hasSize(1);
         assertThat(postRepository.showPostsForTheLastDay().get(0).getDescription()).isEqualTo("description");
-        assertThat(postRepository.showPostsForTheLastDay().get(0).getCreated().getDay()).isEqualTo(post.getCreated().getDay());
+        assertThat(postRepository.showPostsForTheLastDay().get(0).getCreated().getDayOfMonth()).isEqualTo(post.getCreated().getDayOfMonth());
         assertThat(postRepository.showPostsForTheLastDay().get(0).getPhoto()).isEqualTo(photo);
     }
 
@@ -115,13 +115,13 @@ class HblPostRepositoryTest {
         Post post = new Post();
         post.setCar(car);
         post.setPhoto(photo);
-        post.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        post.setCreated(LocalDateTime.now());
         post.setDescription("description");
         save(post);
         Post secondPost = new Post();
         secondPost.setCar(car);
         secondPost.setDescription("desc");
-        secondPost.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        secondPost.setCreated(LocalDateTime.now());
         save(secondPost);
 
         assertThat(postRepository.postsWithPhoto()).hasSize(1);
@@ -159,13 +159,13 @@ class HblPostRepositoryTest {
         Post post = new Post();
         post.setCar(car);
         post.setPhoto(photo);
-        post.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        post.setCreated(LocalDateTime.now());
         post.setDescription("description");
         save(post);
         Post secondPost = new Post();
         secondPost.setCar(secondCar);
         secondPost.setDescription("desc");
-        secondPost.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        secondPost.setCreated(LocalDateTime.now());
         save(secondPost);
 
         assertThat(postRepository.postsWithSpecialCarModel("BMW").get(0).getCar().getBrand().getName()).isEqualTo("BMW");

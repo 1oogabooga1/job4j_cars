@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head th:include="fragments/header :: header"><title>Post</title></head>
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container">
+    <form class="mt-3" th:action="@{/posts/edit}" method="post" th:object="${post}"
+          enctype="multipart/form-data">
+        <input type="hidden" name="post" th:field="*{id}">
+        <input type="hidden" th:field="*{sold}">
+        <input type="hidden" th:field="*{photo.id}">
+        <div class="row mb-3">
+            <div class="col-3">
+                <div class="mb-3">
+                    <img th:src="@{/files/{fileId}(fileId=*{photo.id})}" class="w-100" alt="No image">
+                </div>
+                <div class="mb-3">
+                    <input class="form-control form-control-sm w-100" type="file" id="formFile" name="file">
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label"><b>Description</b></label>
+            <textarea class="form-control" id="description" name="description"
+                      th:field="*{description}" rows="5" placeholder="Post description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="car.brand"><b>Car Brand</b></label>
+            <select class="form-control" id="car.brand" th:field="*{car.brand.id}">
+                <option th:each="brand : ${brands}"
+                        th:value="${brand.id}"
+                        th:text="${brand.name}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="car.engine"><b>Car Engine</b></label>
+            <select class="form-control" id="car.engine" th:field="*{car.engine.id}">
+                <option th:each="engine : ${engines}"
+                        th:value="${engine.id}"
+                        th:text="${engine.name}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="col-6"></div>
+            <div class="col-6">
+                <div class="row">
+
+                    <div class="col-4">
+                        <button class="btn btn-success w-100" type="submit">Edit</button>
+                    </div>
+                    <div class="col-4">
+                        <a class="btn btn-primary w-100"
+                           th:href="@{/posts/sell/{id}(id=${post.id})}" >Sell</a>
+                    </div>
+                    <div class="col-4"><a class="btn btn-danger w-100"
+                                          th:href="@{/posts/delete/{id}(id=${post.id})}">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

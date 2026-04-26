@@ -1,0 +1,6 @@
+INSERT INTO brand(name) VALUES ('MERCEDES');
+INSERT INTO brand(name) VALUES ('VOLKSWAGEN');
+INSERT INTO brand(name) VALUES ('BMW');
+INSERT INTO brand(name) VALUES ('VOLVO');
+INSERT INTO brand(name) VALUES ('MAZDA');
+INSERT INTO brand(name) VALUES ('HAVAL');

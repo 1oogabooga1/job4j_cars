@@ -15,6 +15,11 @@ public class SimpleCarService implements CarService {
     public final CarRepository carRepository;
 
     @Override
+    public Car save(Car car) {
+        return carRepository.save(car);
+    }
+
+    @Override
     public List<Car> getAll() {
         return carRepository.getAll();
     }

@@ -1,0 +1,1 @@
+ALTER TABLE engine ADD COLUMN name TEXT;

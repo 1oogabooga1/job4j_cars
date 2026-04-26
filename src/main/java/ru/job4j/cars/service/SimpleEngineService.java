@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Engine;
 import ru.job4j.cars.repository.EngineRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -12,6 +13,11 @@ import java.util.Optional;
 public class SimpleEngineService implements EngineService {
 
     private final EngineRepository engineRepository;
+
+    @Override
+    public List<Engine> getAll() {
+        return engineRepository.getAll();
+    }
 
     @Override
     public Optional<Engine> getById(int id) {

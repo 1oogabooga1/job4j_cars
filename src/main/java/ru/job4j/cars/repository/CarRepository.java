@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CarRepository {
+    Car save(Car car);
+
     List<Car> getAll();
 
     Optional<Car> getById(int id);

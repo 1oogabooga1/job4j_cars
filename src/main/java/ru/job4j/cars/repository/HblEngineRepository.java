@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.Engine;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +13,11 @@ import java.util.Optional;
 public class HblEngineRepository implements EngineRepository {
 
     private final CrudRepository crudRepository;
+
+    @Override
+    public List<Engine> getAll() {
+        return crudRepository.query("FROM Engine", Engine.class);
+    }
 
     @Override
     public Optional<Engine> getById(int id) {

@@ -16,4 +16,7 @@ public class Owner {
     @EqualsAndHashCode.Include
     private Integer id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

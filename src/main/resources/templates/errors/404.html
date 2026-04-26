@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<body>
+<div class="container mt-5 text-center">
+    <h1>Error</h1>
+    <p class="text-danger" th:text="${message}">Something went wrong</p>
+    <a class="btn btn-primary" th:href="@{/}">Go back</a>
+</div>
+<footer th:include="fragments/footer :: footer"></footer>
+</body>
+</html>
