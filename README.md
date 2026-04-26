@@ -1,4 +1,5 @@
 # Job4j Cars 
+![CI GitHubAction](https://github.com/1oogabooga1/job4j_cars/actions/workflows/maven.yml/badge.svg)
 ## Overview
 In this project I tried to create a web application about car selling. There are car sale announcemens, which include: description, car brand, body type and photo. Also, the announcement has a status - sold or not. 
 Here I used bottom-up design - the application has been being created from database to user's interface. I used hibernate to work with database. 
