@@ -5,6 +5,17 @@
 <div th:replace="fragments/navigation :: navigation"></div>
 <div class="container mt-4">
     <h2>Posts list</h2>
+    <form th:action="@{/posts/allPosts}" method="get" class="d-flex gap-2">
+        <select class="form-control" name="brandName">
+            <option value="">All brands</option>
+            <option th:each="brand : ${brands}"
+                    th:value="${brand.name}"
+                    th:text="${brand.name}"
+                    th:selected="${brand.name == selectedBrand}">
+            </option>
+        </select>
+        <button class="btn btn-primary" type="submit">Filter</button>
+    </form>
     <div class="row">
         <table class="table table-striped">
             <thead>

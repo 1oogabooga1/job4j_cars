@@ -2,7 +2,6 @@ package ru.job4j.cars.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -16,6 +15,7 @@ import ru.job4j.cars.model.Car;
 import ru.job4j.cars.model.Engine;
 
 import java.util.List;
+import java.util.Map;
 
 class HblCarRepositoryTest {
     private static StandardServiceRegistry registry;
@@ -45,9 +45,9 @@ class HblCarRepositoryTest {
 
     @BeforeEach
     void clearTables() {
-        crudRepository.run("DELETE FROM Car", java.util.Map.of());
-        crudRepository.run("DELETE FROM Engine", java.util.Map.of());
-        crudRepository.run("DELETE FROM Brand", java.util.Map.of());
+        crudRepository.run("DELETE FROM Car", Map.of());
+        crudRepository.run("DELETE FROM Engine", Map.of());
+        crudRepository.run("DELETE FROM Brand", Map.of());
     }
 
     @Test
@@ -100,10 +100,6 @@ class HblCarRepositoryTest {
     }
 
     private <T> void save(T entity) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.save(entity);
-            session.getTransaction().commit();
-        }
+        crudRepository.run(session -> session.save(entity));
     }
 }

@@ -28,8 +28,14 @@ public class PostController {
     private final EngineService engineService;
 
     @GetMapping("/allPosts")
-    public String getAllPosts(Model model) {
-        model.addAttribute("allPosts", postService.getAllPosts());
+    public String getAllPosts(Model model,
+                              @RequestParam(required = false) String brandName) {
+        var posts = brandName == null
+                ? postService.getAllPosts()
+                : postService.postsWithSpecialCarModel(brandName);
+        model.addAttribute("allPosts", posts);
+        model.addAttribute("brands", brandService.getAll());
+        model.addAttribute("selectedBrand", brandName);
         return "posts/allPosts";
     }
 
