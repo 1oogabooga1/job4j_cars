@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cars.model.Engine;
 
+import java.util.List;
+
 class HblEngineRepositoryTest {
 
     private static StandardServiceRegistry registry;
@@ -53,11 +55,18 @@ class HblEngineRepositoryTest {
         assertThat(engineRepository.getById(2)).isEmpty();
     }
 
+    @Test
+    void whenSaveTwoEnginesThenGetAllTwoEngines() {
+        Engine first = new Engine();
+        save(first);
+
+        Engine second = new Engine();
+        save(second);
+
+        assertThat(engineRepository.getAll()).usingRecursiveComparison().isEqualTo(List.of(first, second));
+    }
+
     private <T> void save(T entity) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.save(entity);
-            session.getTransaction().commit();
-        }
+        crudRepository.tx(session -> session.save(entity));
     }
 }

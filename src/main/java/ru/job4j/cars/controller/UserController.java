@@ -27,9 +27,9 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(Model model, @ModelAttribute User user, HttpServletRequest request) {
-        Optional<User> getUser = userService.findByLoginAndPassword(user);
+        var getUser = userService.findByLoginAndPassword(user);
         if (getUser.isEmpty()) {
-            model.addAttribute("message", "Invalid login or password");
+            model.addAttribute("message", "Invalid e-mail or password");
             return "errors/404";
         }
         request.getSession().setAttribute("user", getUser.get());

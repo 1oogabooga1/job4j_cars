@@ -64,31 +64,32 @@ class UserRepositoryTest {
         assertThat(userRepository.findByLogin("login_2").get()).isEqualTo(second);
         assertThat(userRepository.findById(first.getId()).get()).isEqualTo(first);
         assertThat(userRepository.findById(second.getId()).get()).isEqualTo(second);
-
     }
 
     @Test
     void whenUpdateUsers() {
-        User second = new User();
-        second.setLogin("login_2");
-        second.setPassword("password");
-        userRepository.create(second);
+        User user = new User();
+        user.setLogin("login_2");
+        user.setPassword("password");
+        userRepository.create(user);
 
-        second.setPassword("new_password");
-        userRepository.update(second);
+        user.setPassword("new_password");
+        userRepository.update(user);
 
         assertThat(userRepository.findByLogin("login_2").get().getPassword()).isEqualTo("new_password");
+        assertThat(userRepository.findByPasswordAndLogin(user).get()).isEqualTo(user);
     }
 
     @Test
     void whenDeleteUsers() {
-        User first = new User();
-        first.setLogin("login");
-        first.setPassword("password");
-        userRepository.create(first);
+        User user = new User();
+        user.setLogin("login");
+        user.setPassword("password");
+        userRepository.create(user);
 
-        userRepository.delete(first.getId());
+        userRepository.delete(user.getId());
 
         assertThat(userRepository.findByLogin("login")).isEmpty();
+        assertThat(userRepository.findByPasswordAndLogin(user)).isEmpty();
     }
 }

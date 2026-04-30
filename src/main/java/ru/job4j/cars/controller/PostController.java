@@ -64,8 +64,6 @@ public class PostController {
                              @SessionAttribute("user") User user,
                              Model model) {
         try {
-            var car = carService.save(post.getCar());
-            post.setCar(car);
             post.setCreated(ZonedDateTime.now().withZoneSameInstant(ZoneId.of(user.getTimeZone())).toLocalDateTime());
             post.setUser(user);
             postService.create(post, new PhotoDto(file.getOriginalFilename(), file.getBytes()));
@@ -86,7 +84,7 @@ public class PostController {
     public String getPost(@PathVariable Integer id, Model model) {
         var post = postService.findById(id);
         if (post.isEmpty()) {
-            model.addAttribute("message", "The task does not exist");
+            model.addAttribute("message", "The post does not exist");
             return "errors/404";
         }
         model.addAttribute("brands", brandService.getAll());

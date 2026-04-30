@@ -18,9 +18,13 @@ public class SimplePostService implements PostService {
 
     private final PhotoService photoService;
 
+    private final CarService carService;
+
     @Override
     public Post create(Post post, PhotoDto photoDto) {
-        Photo photo = photoService.save(photoDto);
+        var photo = photoService.save(photoDto);
+        var car = carService.save(post.getCar());
+        post.setCar(car);
         post.setPhoto(photo);
         return postRepository.create(post);
     }

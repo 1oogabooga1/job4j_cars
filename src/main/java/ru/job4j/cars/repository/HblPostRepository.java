@@ -60,7 +60,9 @@ public class HblPostRepository implements PostRepository {
             Root<Post> root = criteriaQuery.from(Post.class);
             criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("id"), id));
             Query<Post> sessionQuery = session.createQuery(criteriaQuery);
-            return Optional.of(sessionQuery.getResultList().get(0));
+            return sessionQuery.getResultList()
+                    .stream()
+                    .findFirst();
         }
     }
 
@@ -110,7 +112,7 @@ public class HblPostRepository implements PostRepository {
             var criteriaBuilder = session.getCriteriaBuilder();
             var criteriaQuery = criteriaBuilder.createQuery(Post.class);
             Root<Post> root = criteriaQuery.from(Post.class);
-            root.fetch("car");
+            root.fetch("car", JoinType.LEFT);
             criteriaQuery.select(root)
                     .where(criteriaBuilder.isNotNull(root.get("photo")))
                     .distinct(true);

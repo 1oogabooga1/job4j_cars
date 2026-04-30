@@ -67,7 +67,7 @@ class HblCarRepositoryTest {
         Car second = new Car();
         second.setEngine(engine);
         second.setBrand(brand);
-        save(second);
+        carRepository.save(second);
 
         assertThat(carRepository.getAll())
                 .usingRecursiveComparison().isEqualTo(List.of(first, second));
@@ -83,12 +83,12 @@ class HblCarRepositoryTest {
         brand.setName("BMW");
         save(brand);
 
-        Car first = new Car();
-        first.setEngine(engine);
-        first.setBrand(brand);
-        save(first);
+        Car car = new Car();
+        car.setEngine(engine);
+        car.setBrand(brand);
+        carRepository.save(car);
 
-        assertThat(carRepository.getById(first.getId()).get()).isEqualTo(first);
+        assertThat(carRepository.getById(car.getId()).get()).isEqualTo(car);
         assertThat(carRepository.getById(0)).isEmpty();
 
     }
