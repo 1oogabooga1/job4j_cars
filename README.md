@@ -4,7 +4,7 @@
 Job4j Cars is a web application for publishing and managing car sale advertisements. Each post contains a description, car brand, engine type, photo, creation date, and sale status.
 The project was developed using a bottom-up approach: from database schema design and Hibernate entity mapping to service logic, controllers, and the Thymeleaf-based user interface.
 
-##Features 
+## Features 
 - Post management:
   - Create new post.
   - Upload and display car photos.
