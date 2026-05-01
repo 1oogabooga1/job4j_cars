@@ -3,7 +3,6 @@ package ru.job4j.cars.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.dto.PhotoDto;
-import ru.job4j.cars.model.Photo;
 import ru.job4j.cars.model.Post;
 import ru.job4j.cars.repository.PostRepository;
 
@@ -31,8 +30,9 @@ public class SimplePostService implements PostService {
 
     @Override
     public void delete(int id) {
-        photoService.delete(postRepository.findById(id).get().getPhoto().getId());
+        int photoId = postRepository.findById(id).get().getPhoto().getId();
         postRepository.delete(id);
+        photoService.delete(photoId);
     }
 
     @Override

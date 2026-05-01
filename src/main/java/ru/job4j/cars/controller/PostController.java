@@ -30,7 +30,7 @@ public class PostController {
     @GetMapping("/allPosts")
     public String getAllPosts(Model model,
                               @RequestParam(required = false) String brandName) {
-        var posts = brandName == null
+        var posts = brandName == null || brandName.isBlank()
                 ? postService.getAllPosts()
                 : postService.postsWithSpecialCarModel(brandName);
         model.addAttribute("allPosts", posts);
