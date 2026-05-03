@@ -1,13 +1,11 @@
 package ru.job4j.cars.controller;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +23,6 @@ import java.util.Optional;
 class PostControllerTest {
     private static PostService postService;
 
-    private static CarService carService;
-
     private static BrandService brandService;
 
     private static EngineService engineService;
@@ -40,9 +36,8 @@ class PostControllerTest {
         postService = mock(SimplePostService.class);
         brandService = mock(SimpleBrandService.class);
         engineService = mock(SimpleEngineService.class);
-        carService = mock(SimpleCarService.class);
         testFile = new MockMultipartFile("test", new byte[]{1, 2, 3});
-        postController = new PostController(postService, carService, brandService, engineService);
+        postController = new PostController(postService, brandService, engineService);
     }
 
     @Test

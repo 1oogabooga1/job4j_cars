@@ -9,7 +9,6 @@ import ru.job4j.cars.dto.PhotoDto;
 import ru.job4j.cars.model.Post;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.service.BrandService;
-import ru.job4j.cars.service.CarService;
 import ru.job4j.cars.service.EngineService;
 import ru.job4j.cars.service.PostService;
 import java.time.ZoneId;
@@ -20,8 +19,6 @@ import java.time.ZonedDateTime;
 @RequestMapping("/posts")
 public class PostController {
     private final PostService postService;
-
-    private final CarService carService;
 
     private final BrandService brandService;
 
