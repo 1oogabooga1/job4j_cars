@@ -1,14 +1,13 @@
 package ru.job4j.cars.repository;
 
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.Post;
-
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

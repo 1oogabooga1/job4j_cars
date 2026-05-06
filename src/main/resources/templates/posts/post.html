@@ -53,11 +53,21 @@
                         <button class="btn btn-success w-100" type="submit">Edit</button>
                     </div>
                     <div class="col-4">
-                        <a class="btn btn-primary w-100"
-                           th:href="@{/posts/sell/{id}(id=${post.id})}" >Sell</a>
+                        <button class="btn btn-primary w-100"
+                                type="submit"
+                                th:formaction="@{/posts/sell/{id}(id=${post.id})}"
+                                formmethod="post">
+                            Sell
+                        </button>
                     </div>
-                    <div class="col-4"><a class="btn btn-danger w-100"
-                                          th:href="@{/posts/delete/{id}(id=${post.id})}">Delete</a>
+
+                    <div class="col-4">
+                        <button class="btn btn-danger w-100"
+                                type="submit"
+                                th:formaction="@{/posts/delete/{id}(id=${post.id})}"
+                                formmethod="post">
+                            Delete
+                        </button>
                     </div>
                 </div>
             </div>

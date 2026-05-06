@@ -4,16 +4,14 @@ package ru.job4j.cars.service;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cars.dto.PhotoDto;
-import ru.job4j.cars.model.Brand;
-import ru.job4j.cars.model.Car;
-import ru.job4j.cars.model.Photo;
-import ru.job4j.cars.model.Post;
+import ru.job4j.cars.model.*;
 import ru.job4j.cars.repository.HblPostRepository;
 import ru.job4j.cars.repository.PostRepository;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -62,8 +60,12 @@ class SimplePostServiceTest {
     }
 
     @Test
-    void whenEditPostThenGetNewPhoto() {
+    void whenOwnerEditsPostThenGetNewPhoto() {
+        User user = new User();
+        user.setId(1);
         Post post = new Post();
+        post.setId(1);
+        post.setUser(user);
         Photo oldPhoto = new Photo();
         oldPhoto.setId(10);
         oldPhoto.setName("old");
@@ -75,24 +77,79 @@ class SimplePostServiceTest {
         newPhoto.setPath("path");
         newPhoto.setName("name");
         when(photoService.save(photoDto)).thenReturn(newPhoto);
+        when(postRepository.findById(1)).thenReturn(Optional.of(post));
 
-        postService.edit(post, photoDto);
+        postService.edit(post, photoDto, 1);
 
         assertThat(post.getPhoto()).isEqualTo(newPhoto);
     }
 
     @Test
-    void whenEditPostWithoutNewPhotoThenPhotoIsOld() {
+    void whenOwnerEditsPostWithoutNewPhotoThenPhotoIsOld() {
+        User user = new User();
+        user.setId(1);
         Post post = new Post();
+        post.setId(1);
+        post.setUser(user);
         Photo oldPhoto = new Photo();
         oldPhoto.setId(10);
         oldPhoto.setName("old");
         post.setPhoto(oldPhoto);
 
         PhotoDto photoDto = new PhotoDto("name", new byte[]{});
+        when(postRepository.findById(1)).thenReturn(Optional.of(post));
 
-        postService.edit(post, photoDto);
+        postService.edit(post, photoDto, 1);
 
         assertThat(post.getPhoto()).isEqualTo(oldPhoto);
+    }
+
+    @Test
+    void whenSomeUserEditsPostThenException() {
+        User user = new User();
+        user.setId(1);
+        Post post = new Post();
+        post.setId(1);
+        post.setUser(user);
+        Photo oldPhoto = new Photo();
+        oldPhoto.setId(10);
+        oldPhoto.setName("old");
+        post.setPhoto(oldPhoto);
+
+        PhotoDto photoDto = new PhotoDto("name", new byte[]{});
+        when(postRepository.findById(1)).thenReturn(Optional.of(post));
+        var exception = assertThrows(IllegalArgumentException.class, () -> postService.edit(post, photoDto, 2));
+        assertThat(exception.getMessage()).isEqualTo("Only owner can perform this action");
+    }
+
+    @Test
+    void whenSomeUserSellsTheCarThenException() {
+        User user = new User();
+        user.setId(1);
+        Post post = new Post();
+        post.setUser(user);
+        post.setId(1);
+        when(postRepository.findById(1)).thenReturn(Optional.of(post));
+        var exception = assertThrows(IllegalArgumentException.class,
+                () -> postService.sellCar(post.getId(), 2));
+        assertThat(exception.getMessage()).isEqualTo("Only owner can perform this action");
+    }
+
+    @Test
+    void whenOwnerEditsNonExistingPostThenException() {
+        User user = new User();
+        user.setId(1);
+        Post post = new Post();
+        post.setId(1);
+        post.setUser(user);
+        Photo oldPhoto = new Photo();
+        oldPhoto.setId(10);
+        oldPhoto.setName("old");
+        post.setPhoto(oldPhoto);
+        PhotoDto photoDto = new PhotoDto("name", new byte[]{});
+        when(postRepository.findById(1)).thenReturn(Optional.empty());
+        var exception = assertThrows(IllegalArgumentException.class,
+                () -> postService.edit(post, photoDto, 1));
+        assertThat(exception.getMessage()).isEqualTo("Post with id 1 was not found");
     }
 }

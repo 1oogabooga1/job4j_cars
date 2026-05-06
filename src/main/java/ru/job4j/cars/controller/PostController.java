@@ -29,7 +29,7 @@ public class PostController {
                               @RequestParam(required = false) String brandName) {
         var posts = brandName == null || brandName.isBlank()
                 ? postService.getAllPosts()
-                : postService.postsWithSpecialCarModel(brandName);
+                : postService.postsWithSpecialCarBrand(brandName);
         model.addAttribute("allPosts", posts);
         model.addAttribute("brands", brandService.getAll());
         model.addAttribute("selectedBrand", brandName);
@@ -71,10 +71,15 @@ public class PostController {
         }
     }
 
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable int id) {
-        postService.delete(id);
-        return "redirect:/posts/allPosts";
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable int id, @SessionAttribute User user, Model model) {
+        try {
+            postService.delete(id, user.getId());
+            return "redirect:/posts/allPosts";
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
+            return "errors/404";
+        }
     }
 
     @GetMapping("/{id}")
@@ -96,11 +101,7 @@ public class PostController {
                            @SessionAttribute User user,
                            Model model) {
         try {
-            var dbPost = postService.findById(post.getId()).get();
-            if (user.getId() != dbPost.getUser().getId()) {
-                throw new Exception("Sorry, only owner can edit the post.");
-            }
-            postService.edit(post, new PhotoDto(file.getOriginalFilename(), file.getBytes()));
+            postService.edit(post, new PhotoDto(file.getOriginalFilename(), file.getBytes()), user.getId());
             return "redirect:/posts/allPosts";
         } catch (Exception e) {
             model.addAttribute("message", e.getMessage());
@@ -108,16 +109,16 @@ public class PostController {
         }
     }
 
-    @GetMapping("/sell/{id}")
+    @PostMapping("/sell/{id}")
     public String sellCar(@PathVariable int id,
                           @SessionAttribute User user,
                           Model model) {
-        var dbPost = postService.findById(id);
-        if (dbPost.get().getUser().getId() != user.getId()) {
-            model.addAttribute("message", "Sorry, only owner can sell the car.");
+        try {
+            postService.sellCar(id, user.getId());
+            return "redirect:/posts/allPosts";
+        } catch (Exception e) {
+            model.addAttribute("message", e.getMessage());
             return "errors/404";
         }
-        postService.sellCar(id);
-        return "redirect:/posts/allPosts";
     }
 }

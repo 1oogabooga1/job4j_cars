@@ -29,15 +29,19 @@ public class SimplePostService implements PostService {
     }
 
     @Override
-    public void delete(int id) {
-        int photoId = postRepository.findById(id).get().getPhoto().getId();
+    public void delete(int id, int userId) {
+        Post post = validate(id, userId);
         postRepository.delete(id);
-        photoService.delete(photoId);
+        if (post.getPhoto() != null) {
+            int photoId = post.getPhoto().getId();
+            photoService.delete(photoId);
+        }
     }
 
     @Override
-    public void edit(Post postFromSession, PhotoDto photo) {
+    public void edit(Post postFromSession, PhotoDto photo, int userId) {
         var isNewFileEmpty = photo.getContent().length == 0;
+        validate(postFromSession.getId(), userId);
         if (isNewFileEmpty) {
             postRepository.edit(postFromSession);
         } else {
@@ -50,7 +54,8 @@ public class SimplePostService implements PostService {
     }
 
     @Override
-    public void sellCar(int id) {
+    public void sellCar(int id, int userId) {
+        validate(id, userId);
         postRepository.sellCar(id);
     }
 
@@ -75,7 +80,17 @@ public class SimplePostService implements PostService {
     }
 
     @Override
-    public List<Post> postsWithSpecialCarModel(String model) {
-        return postRepository.postsWithSpecialCarModel(model);
+    public List<Post> postsWithSpecialCarBrand(String brand) {
+        return postRepository.postsWithSpecialCarModel(brand);
+    }
+
+    private Post validate(int postId, int userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Post with id %d was not found", postId)));
+        if (userId != post.getUser().getId()) {
+            throw new IllegalArgumentException("Only owner can perform this action");
+        }
+        return post;
     }
 }

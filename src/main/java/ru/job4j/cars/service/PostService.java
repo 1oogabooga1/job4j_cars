@@ -9,11 +9,11 @@ import java.util.Optional;
 public interface PostService {
     Post create(Post post, PhotoDto photoDto);
 
-    void delete(int id);
+    void delete(int id, int userId);
 
-    void edit(Post postFromSession, PhotoDto photo);
+    void edit(Post postFromSession, PhotoDto photo, int userId);
 
-    void sellCar(int id);
+    void sellCar(int id, int userId);
 
     Optional<Post> findById(int id);
 
@@ -23,5 +23,5 @@ public interface PostService {
 
     List<Post> postsWithPhoto();
 
-    List<Post> postsWithSpecialCarModel(String model);
+    List<Post> postsWithSpecialCarBrand(String brand);
 }

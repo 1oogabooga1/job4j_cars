@@ -90,10 +90,9 @@ class PostControllerTest {
         Post secondPost = new Post();
         secondPost.setCar(secondCar);
 
-        List<Post> posts = List.of(firstPost, secondPost);
         List<Brand> brands = List.of(firstBrand, secondBrand);
 
-        when(postService.postsWithSpecialCarModel(firstBrand.getName())).thenReturn(List.of(firstPost));
+        when(postService.postsWithSpecialCarBrand(firstBrand.getName())).thenReturn(List.of(firstPost));
         when(brandService.getAll()).thenReturn(brands);
 
         var model = new ConcurrentModel();
@@ -129,7 +128,7 @@ class PostControllerTest {
     }
 
     @Test
-    void whenSomeUserEditPostThenException() {
+    void whenSomeUserEditsPostThenException() {
         Post post = new Post();
         post.setId(1);
         User user = new User();
@@ -138,13 +137,15 @@ class PostControllerTest {
         User someUser = new User();
         someUser.setId(2);
 
-        when(postService.findById(post.getId())).thenReturn(Optional.of(post));
+        doThrow(new IllegalArgumentException("Only owner can perform this action"))
+                .when(postService)
+                .edit(any(Post.class), any(PhotoDto.class), eq(someUser.getId()));
 
         var model = new ConcurrentModel();
         var view = postController.editPost(post, testFile, someUser, model);
 
         assertThat(view).isEqualTo("errors/404");
-        assertThat(model.getAttribute("message")).isEqualTo("Sorry, only owner can edit the post.");
+        assertThat(model.getAttribute("message")).isEqualTo("Only owner can perform this action");
     }
 
     @Test
@@ -154,8 +155,6 @@ class PostControllerTest {
         User user = new User();
         user.setId(1);
         post.setUser(user);
-
-        when(postService.findById(post.getId())).thenReturn(Optional.of(post));
 
         var model = new ConcurrentModel();
         var view = postController.editPost(post, testFile, user, model);
@@ -172,25 +171,26 @@ class PostControllerTest {
         post.setUser(owner);
         User someUser = new User();
         someUser.setId(3);
-        when(postService.findById(post.getId())).thenReturn(Optional.of(post));
+
+        doThrow(new IllegalArgumentException("Only owner can perform this action"))
+                .when(postService)
+                .sellCar(1, someUser.getId());
 
         var model = new ConcurrentModel();
         var view = postController.sellCar(post.getId(), someUser, model);
 
         assertThat(view).isEqualTo("errors/404");
         assertThat(model.getAttribute("message"))
-                .isEqualTo("Sorry, only owner can sell the car.");
+                .isEqualTo("Only owner can perform this action");
     }
 
     @Test
     void whenOwnerSellsTheCarThenSuccess() {
-        Post post = new Post();
-        post.setId(1);
         User owner = new User();
         owner.setId(1);
+        Post post = new Post();
+        post.setId(1);
         post.setUser(owner);
-
-        when(postService.findById(post.getId())).thenReturn(Optional.of(post));
 
         var model = new ConcurrentModel();
         var view = postController.sellCar(post.getId(), owner, model);
@@ -215,13 +215,10 @@ class PostControllerTest {
 
     @Test
     void whenPostDoesNotExistsThenGetPostUnsuccessful() {
-        Post post = new Post();
-        post.setId(1);
-
-        when(postService.findById(post.getId())).thenReturn(Optional.empty());
+        when(postService.findById(1)).thenReturn(Optional.empty());
 
         var model = new ConcurrentModel();
-        var view = postController.getPost(post.getId(), model);
+        var view = postController.getPost(1, model);
 
         assertThat(view).isEqualTo("errors/404");
         assertThat(model.getAttribute("message")).isEqualTo("The post does not exist");
