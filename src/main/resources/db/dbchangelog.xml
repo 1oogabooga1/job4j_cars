@@ -1,33 +1,205 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
-    http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
-    <include file="db/scripts/001_ddl_create_table_auto_user.sql"/>
-    <include file="db/scripts/002_ddl_create_table_auto_post.sql"/>
-    <include file="db/scripts/003_dml_insert_auto_user.sql"/>
-    <include file="db/scripts/004_ddl_add_table_price_history.sql"/>
-    <include file="db/scripts/005_ddl_create_table_participates.sql"/>
-    <include file="db/scripts/006_ddl_create_table_engine.sql"/>
-    <include file="db/scripts/007_ddl_create_table_owners.sql"/>
-    <include file="db/scripts/008_ddl_create_table_car.sql"/>
-    <include file="db/scripts/009_ddl_create_table_history_owner.sql"/>
-    <include file="db/scripts/010_ddl_create_table_history.sql"/>
-    <include file="db/scripts/011_ddl_create_table_photo.sql"/>
-    <include file="db/scripts/012_ddl_create_table_brand.sql"/>
-    <include file="db/scripts/013_dml_alter_table_post_add_new_columns.sql"/>
-    <include file="db/scripts/014_dml_alter_table_car_add_column_brand_id.sql"/>
-    <include file="db/scripts/015_dml_alter_table_auto_user_add_column_name.sql"/>
-    <include file="db/scripts/016_dml_alter_table_post_edit_column_created.sql"/>
-    <include file="db/scripts/017_dml_alter_table_post_add_column_sold.sql"/>
-    <include file="db/scripts/018_dml_insert_into_brand.sql"/>
-    <include file="db/scripts/019_dml_alter_table_engine_add_column_name.sql"/>
-    <include file="db/scripts/020_dml_alter_table_owners_add_column_user_id.sql"/>
-    <include file="db/scripts/021_dml_insert_into_engines.sql"/>
-    <include file="db/scripts/022_dml_alter_table_car_edit_column_engine_id.sql"/>
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001" author="dmitrii">
+        <sqlFile path="scripts/001_ddl_create_table_auto_user.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/001_rollback_create_table_auto_user.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="002" author="dmitrii">
+        <sqlFile path="scripts/002_ddl_create_table_auto_post.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/002_rollback_create_table_auto_post.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="003" author="dmitrii">
+        <sqlFile path="scripts/003_dml_insert_auto_user.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/003_rollback_insert_auto_user.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="004" author="dmitrii">
+        <sqlFile path="scripts/004_ddl_add_table_price_history.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/004_rollback_add_table_price_history.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="005" author="dmitrii">
+        <sqlFile path="scripts/005_ddl_create_table_participates.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/005_rollback_create_table_participates.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="006" author="dmitrii">
+        <sqlFile path="scripts/006_ddl_create_table_engine.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/006_rollback_create_table_engine.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="007" author="dmitrii">
+        <sqlFile path="scripts/007_ddl_create_table_owners.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/007_rollback_create_table_owners.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="008" author="dmitrii">
+        <sqlFile path="scripts/008_ddl_create_table_car.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/008_rollback_create_table_car.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="009" author="dmitrii">
+        <sqlFile path="scripts/009_ddl_create_table_history_owner.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/009_rollback_create_table_history_owner.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="010" author="dmitrii">
+        <sqlFile path="scripts/010_ddl_create_table_history.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/010_rollback_create_table_history.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="011" author="dmitrii">
+        <sqlFile path="scripts/011_ddl_create_table_photo.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/011_rollback_create_table_photo.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="012" author="dmitrii">
+        <sqlFile path="scripts/012_ddl_create_table_brand.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/012_rollback_create_table_brand.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="013" author="dmitrii">
+        <sqlFile path="scripts/013_dml_alter_table_post_add_new_columns.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/013_rollback_alter_table_post_add_new_columns.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="014" author="dmitrii">
+        <sqlFile path="scripts/014_dml_alter_table_car_add_column_brand_id.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/014_rollback_alter_table_car_add_column_brand_id.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="015" author="dmitrii">
+        <sqlFile path="scripts/015_dml_alter_table_auto_user_add_column_name.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/015_rollback_alter_table_auto_user_add_column_name.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="016" author="dmitrii">
+        <sqlFile path="scripts/016_dml_alter_table_post_edit_column_created.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/016_rollback_alter_table_post_edit_column_created.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="017" author="dmitrii">
+        <sqlFile path="scripts/017_dml_alter_table_post_add_column_sold.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/017_rollback_alter_table_post_add_column_sold.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="018" author="dmitrii">
+        <sqlFile path="scripts/018_dml_insert_into_brand.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/018_rollback_insert_into_brand.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="019" author="dmitrii">
+        <sqlFile path="scripts/019_dml_alter_table_engine_add_column_name.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/019_rollback_alter_table_engine_add_column_name.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="020" author="dmitrii">
+        <sqlFile path="scripts/020_dml_alter_table_owners_add_column_user_id.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/020_rollback_alter_table_owners_add_column_user_id.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="021" author="dmitrii">
+        <sqlFile path="scripts/021_dml_insert_into_engines.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/021_rollback_insert_into_engines.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="022" author="dmitrii">
+        <sqlFile path="scripts/022_dml_alter_table_car_edit_column_engine_id.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="scripts/rollback/022_rollback_alter_table_car_edit_column_engine_id.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
 </databaseChangeLog>

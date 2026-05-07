@@ -1,0 +1,1 @@
+ALTER TABLE owners DROP COLUMN user_id;

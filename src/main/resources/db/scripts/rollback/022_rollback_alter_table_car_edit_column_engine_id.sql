@@ -1,0 +1,1 @@
+ALTER TABLE car ADD CONSTRAINT car_engine_id_key UNIQUE (engine_id);
