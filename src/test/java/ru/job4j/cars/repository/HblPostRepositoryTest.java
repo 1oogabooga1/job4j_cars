@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cars.model.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,14 +52,24 @@ class HblPostRepositoryTest {
     }
 
     @Test
-    void whenShowPostForTheLastDay() {
-        Post post = new Post();
-        post.setCreated(LocalDateTime.now());
-        post.setDescription("description");
-        postRepository.create(post);
-        assertThat(postRepository.showPostsForTheLastDay()).hasSize(1);
-        assertThat(postRepository.showPostsForTheLastDay().get(0).getDescription()).isEqualTo("description");
-        assertThat(postRepository.showPostsForTheLastDay().get(0).getCreated().getDayOfMonth()).isEqualTo(post.getCreated().getDayOfMonth());
+    void whenShowPostForTheLastDayLimit3ThenNoMoreThan3Posts() {
+        Post first = new Post();
+        first.setCreated(LocalDateTime.now());
+        Post second = new Post();
+        second.setCreated(LocalDateTime.now());
+        Post third = new Post();
+        third.setCreated(LocalDateTime.now());
+        Post fourth = new Post();
+        fourth.setCreated(LocalDateTime.now());
+        postRepository.create(first);
+        postRepository.create(second);
+        postRepository.create(third);
+        postRepository.create(fourth);
+        assertThat(postRepository.findPostsForTheLastDay(3)).hasSize(3);
+        assertThat(postRepository.findPostsForTheLastDay(5)).hasSize(4);
+        assertThat(postRepository.findPostsForTheLastDay(4)).hasSize(4);
+        assertThat(postRepository.findPostsForTheLastDay(3).get(0).getCreated().getDayOfMonth())
+                .isEqualTo(first.getCreated().getDayOfMonth());
     }
 
     @Test
@@ -81,10 +90,11 @@ class HblPostRepositoryTest {
         secondPost.setCreated(LocalDateTime.now());
         postRepository.create(secondPost);
 
-        assertThat(postRepository.postsWithPhoto()).hasSize(1);
-        assertThat(postRepository.postsWithPhoto().get(0).getPhoto()).isEqualTo(photo);
-        assertThat(postRepository.showPostsForTheLastDay()).hasSize(2);
-        assertThat(postRepository.showPostsForTheLastDay()).containsExactlyInAnyOrder(post, secondPost);
+        assertThat(postRepository.findPostsWithPhoto(5)).hasSize(1);
+        assertThat(postRepository.findPostsWithPhoto(5)).hasSize(1);
+        assertThat(postRepository.findPostsWithPhoto(1).get(0).getPhoto()).isEqualTo(photo);
+        assertThat(postRepository.findPostsForTheLastDay(5)).hasSize(2);
+        assertThat(postRepository.findPostsForTheLastDay(2)).containsExactlyInAnyOrder(post, secondPost);
     }
 
     @Test
@@ -115,20 +125,22 @@ class HblPostRepositoryTest {
         secondPost.setCreated(LocalDateTime.now());
         save(secondPost);
 
-        assertThat(postRepository.postsWithSpecialCarModel("BMW").get(0).getCar().getBrand().getName()).isEqualTo("BMW");
-        assertThat(postRepository.postsWithSpecialCarModel("Mercedes")).hasSize(1);
-        assertThat(postRepository.getAllPosts()).hasSize(2);
+        assertThat(postRepository.findPostsWithSpecialCarBrand("BMW", 5).get(0).getCar().getBrand().getName()).isEqualTo("BMW");
+        assertThat(postRepository.findPostsWithSpecialCarBrand("Mercedes", 5)).hasSize(1);
+        assertThat(postRepository.findPostsWithSpecialCarBrand(null, 5)).isEqualTo(List.of());
+        assertThat(postRepository.findAllPosts(5)).hasSize(2);
     }
 
     @Test
-    void whenDeleteThenFindByIdIsEmpty() {
+    void whenDeleteIsTrueThenFindByIdIsEmpty() {
         Post post = new Post();
         postRepository.create(post);
 
         assertThat(postRepository.findById(post.getId())).isNotEmpty();
 
-        postRepository.delete(post.getId());
+        var result = postRepository.delete(post.getId());
 
+        assertThat(result).isTrue();
         assertThat(postRepository.findById(post.getId())).isEmpty();
     }
 
@@ -142,47 +154,45 @@ class HblPostRepositoryTest {
         newPhoto.setName("new");
         newPhoto.setPath("some path");
         save(newPhoto);
-
         Brand brand = new Brand();
         brand.setName("BMW");
         save(brand);
         Brand newBrand = new Brand();
         newBrand.setName("new brand");
         save(newBrand);
-
         Car car = new Car();
         car.setBrand(brand);
         save(car);
-
+        Car newCar = new Car();
+        newCar.setBrand(newBrand);
+        save(newCar);
         Post post = new Post();
         post.setCar(car);
         post.setPhoto(photo);
         post.setDescription("Old description");
         postRepository.create(post);
-
         assertThat(postRepository.findById(post.getId()).get().getDescription()).isEqualTo("Old description");
-
         post.setDescription("New description");
-        post.getCar().setBrand(newBrand);
+        post.setCar(newCar);
         post.setPhoto(newPhoto);
         postRepository.edit(post);
-
         Post newPost = postRepository.findById(post.getId()).get();
-
         assertThat(newPost.getDescription()).isEqualTo("New description");
-        assertThat(newPost.getCar().getBrand().getName()).isEqualTo("new brand");
+        assertThat(newPost.getCar()).isEqualTo(newCar);
+        assertThat(newPost.getCar().getBrand()).isEqualTo(newBrand);
         assertThat(newPost.getPhoto().getName()).isEqualTo("new");
     }
 
     @Test
-    void whenSellCarThenCarIsSold() {
+    void whenSellCarIsTrueThenCarIsSold() {
         Post post = new Post();
         postRepository.create(post);
         assertThat(post.isSold()).isFalse();
 
-        postRepository.sellCar(post.getId());
+        var result = postRepository.markAsSold(post.getId());
 
         var postFromDb = postRepository.findById(post.getId()).get();
+        assertThat(result).isTrue();
         assertThat(postFromDb.isSold()).isTrue();
     }
 

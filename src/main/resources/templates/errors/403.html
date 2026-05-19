@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:include="fragments/header :: header">
-    <title>Not Found</title>
+    <title>Forbidden</title>
 </head>
 <body>
 <div class="container mt-5 text-center">
-    <h1>404 - Not Found</h1>
+    <h1>403 - Forbidden</h1>
     <p class="text-danger" th:text="${message}">
-        The requested resource was not found.
+        You do not have permission to perform this action.
     </p>
     <a class="btn btn-primary" th:href="@{/posts/allPosts}">Go to posts</a>
     <a class="btn btn-secondary" th:href="@{/}">Go home</a>

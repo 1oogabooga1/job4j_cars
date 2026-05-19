@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import ru.job4j.cars.dto.PhotoDto;
 import ru.job4j.cars.model.Post;
 import ru.job4j.cars.repository.PostRepository;
+import ru.job4j.cars.results.DeletePostResult;
+import ru.job4j.cars.results.EditPostResult;
+import ru.job4j.cars.results.MarkAsSoldPostResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +22,10 @@ public class SimplePostService implements PostService {
 
     private final CarService carService;
 
+    private static final int MAX_POST_LIMIT = 20;
+
+    private static final int DEFAULT_POST_LIMIT = 5;
+
     @Override
     public Post create(Post post, PhotoDto photoDto) {
         var photo = photoService.save(photoDto);
@@ -29,34 +36,77 @@ public class SimplePostService implements PostService {
     }
 
     @Override
-    public void delete(int id, int userId) {
-        Post post = validate(id, userId);
-        postRepository.delete(id);
+    public DeletePostResult delete(int id, int userId) {
+        var postOptional = findById(id);
+        if (postOptional.isEmpty()) {
+            return DeletePostResult.NOT_FOUND;
+        }
+        var post = postOptional.get();
+        if (!isOwner(post, userId)) {
+            return DeletePostResult.FORBIDDEN;
+        }
+        boolean deleteRsl = postRepository.delete(id);
+        if (!deleteRsl) {
+            return DeletePostResult.NOT_FOUND;
+        }
         if (post.getPhoto() != null) {
             int photoId = post.getPhoto().getId();
             photoService.delete(photoId);
         }
+        return DeletePostResult.SUCCESS;
     }
 
     @Override
-    public void edit(Post postFromSession, PhotoDto photo, int userId) {
-        var isNewFileEmpty = photo.getContent().length == 0;
-        validate(postFromSession.getId(), userId);
-        if (isNewFileEmpty) {
-            postRepository.edit(postFromSession);
-        } else {
-            var oldPhoto = postFromSession.getPhoto();
-            var newPhoto = photoService.save(photo);
-            postFromSession.setPhoto(newPhoto);
-            postRepository.edit(postFromSession);
-            photoService.delete(oldPhoto.getId());
+    public EditPostResult edit(Post postFromSession, PhotoDto photo, int userId) {
+        var isNewFileEmpty = photo.getContent() == null || photo.getContent().length == 0;
+        var postOptional = findById(postFromSession.getId());
+        if (postOptional.isEmpty()) {
+            return EditPostResult.NOT_FOUND;
         }
+        var post = postOptional.get();
+        if (!isOwner(post, userId)) {
+            return EditPostResult.FORBIDDEN;
+        }
+        if (postFromSession.getCar() == null
+                || postFromSession.getCar().getBrand() == null
+                || postFromSession.getCar().getEngine() == null) {
+            return EditPostResult.INVALID_DATA;
+        }
+        post.setDescription(postFromSession.getDescription());
+        post.getCar().setBrand(postFromSession.getCar().getBrand());
+        post.getCar().setEngine(postFromSession.getCar().getEngine());
+        if (isNewFileEmpty) {
+            postRepository.edit(post);
+        } else {
+            var oldPhoto = post.getPhoto();
+            var newPhoto = photoService.save(photo);
+            post.setPhoto(newPhoto);
+            postRepository.edit(post);
+            if (oldPhoto != null) {
+                photoService.delete(oldPhoto.getId());
+            }
+        }
+        return EditPostResult.SUCCESS;
     }
 
     @Override
-    public void sellCar(int id, int userId) {
-        validate(id, userId);
-        postRepository.sellCar(id);
+    public MarkAsSoldPostResult markAsSold(int id, int userId) {
+        var postOptional = findById(id);
+        if (postOptional.isEmpty()) {
+            return MarkAsSoldPostResult.NOT_FOUND;
+        }
+        var post = postOptional.get();
+        if (!isOwner(post, userId)) {
+            return MarkAsSoldPostResult.FORBIDDEN;
+        }
+        if (post.isSold()) {
+            return MarkAsSoldPostResult.ALREADY_SOLD;
+        }
+        var markRsl = postRepository.markAsSold(id);
+        if (!markRsl) {
+            return MarkAsSoldPostResult.NOT_FOUND;
+        }
+        return MarkAsSoldPostResult.SUCCESS;
     }
 
     @Override
@@ -65,32 +115,37 @@ public class SimplePostService implements PostService {
     }
 
     @Override
-    public List<Post> getAllPosts() {
-        return postRepository.getAllPosts();
+    public List<Post> findAllPosts(int limit) {
+        return postRepository.findAllPosts(normalizeLimit(limit));
     }
 
     @Override
-    public List<Post> showPostsForTheLastDay() {
-        return postRepository.showPostsForTheLastDay();
+    public List<Post> findPostsForTheLastDay(int limit) {
+        return postRepository.findPostsForTheLastDay(normalizeLimit(limit));
     }
 
     @Override
-    public List<Post> postsWithPhoto() {
-        return postRepository.postsWithPhoto();
+    public List<Post> findPostsWithPhoto(int limit) {
+        return postRepository.findPostsWithPhoto(normalizeLimit(limit));
     }
 
     @Override
-    public List<Post> postsWithSpecialCarBrand(String brand) {
-        return postRepository.postsWithSpecialCarModel(brand);
-    }
-
-    private Post validate(int postId, int userId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Post with id %d was not found", postId)));
-        if (userId != post.getUser().getId()) {
-            throw new IllegalArgumentException("Only owner can perform this action");
+    public List<Post> findPostsWithSpecialCarBrand(String brand, int limit) {
+        if (brand == null || brand.isBlank()) {
+            return List.of();
         }
-        return post;
+        return postRepository.findPostsWithSpecialCarBrand(brand, normalizeLimit(limit));
+    }
+
+    private boolean isOwner(Post post, int userId) {
+        return post.getUser() != null
+                && Integer.valueOf(userId).equals(post.getUser().getId());
+    }
+
+    private int normalizeLimit(int limit) {
+        if (limit <= 0) {
+            limit = DEFAULT_POST_LIMIT;
+        }
+        return Math.min(limit, MAX_POST_LIMIT);
     }
 }

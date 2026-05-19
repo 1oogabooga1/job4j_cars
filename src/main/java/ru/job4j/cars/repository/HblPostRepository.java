@@ -29,24 +29,21 @@ public class HblPostRepository implements PostRepository {
     }
 
     @Override
-    public void delete(int id) {
+    public boolean delete(int id) {
         try (var session = sf.openSession()) {
             session.beginTransaction();
-            session.createQuery("DELETE Post WHERE id =:id")
+            int affected = session.createQuery("DELETE Post WHERE id =:id")
                     .setParameter("id", id).executeUpdate();
             session.getTransaction().commit();
+            return affected != 0;
         }
     }
 
     @Override
-    public void edit(Post postFromSession) {
+    public void edit(Post post) {
         try (var session = sf.openSession()) {
             session.beginTransaction();
-            var postInDb = session.get(Post.class, postFromSession.getId());
-            postInDb.setPhoto(postFromSession.getPhoto());
-            postInDb.setDescription(postFromSession.getDescription());
-            postInDb.getCar().setBrand(postFromSession.getCar().getBrand());
-            postInDb.getCar().setEngine(postFromSession.getCar().getEngine());
+            session.merge(post);
             session.getTransaction().commit();
         }
     }
@@ -66,30 +63,33 @@ public class HblPostRepository implements PostRepository {
     }
 
     @Override
-    public void sellCar(int id) {
+    public boolean markAsSold(int id) {
         try (var session = sf.openSession()) {
             session.beginTransaction();
-            session.createQuery("UPDATE Post SET sold = :sold WHERE id = :id AND sold <> :sold")
+            int affected = session.createQuery("UPDATE Post SET sold = :sold WHERE id = :id AND sold <> :sold")
                     .setParameter("id", id)
                     .setParameter("sold", true).executeUpdate();
             session.getTransaction().commit();
+            return affected != 0;
         }
     }
 
     @Override
-    public List<Post> getAllPosts() {
+    public List<Post> findAllPosts(int limit) {
         try (var session = sf.openSession()) {
             var criteriaBuilder = session.getCriteriaBuilder();
             var criteriaQuery = criteriaBuilder.createQuery(Post.class);
             Root<Post> root = criteriaQuery.from(Post.class);
             criteriaQuery.select(root);
             Query<Post> sessionQuery = session.createQuery(criteriaQuery);
-            return sessionQuery.getResultList();
+            return sessionQuery
+                    .setMaxResults(limit)
+                    .getResultList();
         }
     }
 
     @Override
-    public List<Post> showPostsForTheLastDay() {
+    public List<Post> findPostsForTheLastDay(int limit) {
         try (Session session = sf.openSession()) {
             var criteriaBuilder = session.getCriteriaBuilder();
             var criteriaQuery = criteriaBuilder.createQuery(Post.class);
@@ -101,12 +101,14 @@ public class HblPostRepository implements PostRepository {
                     .distinct(true);
 
             Query<Post> sessionQuery = session.createQuery(criteriaQuery);
-            return sessionQuery.getResultList();
+            return sessionQuery
+                    .setMaxResults(limit)
+                    .getResultList();
         }
     }
 
     @Override
-    public List<Post> postsWithPhoto() {
+    public List<Post> findPostsWithPhoto(int limit) {
         try (Session session = sf.openSession()) {
             var criteriaBuilder = session.getCriteriaBuilder();
             var criteriaQuery = criteriaBuilder.createQuery(Post.class);
@@ -116,12 +118,14 @@ public class HblPostRepository implements PostRepository {
                     .where(criteriaBuilder.isNotNull(root.get("photo")))
                     .distinct(true);
             Query<Post> sessionQuery = session.createQuery(criteriaQuery);
-            return sessionQuery.getResultList();
+            return sessionQuery
+                    .setMaxResults(limit)
+                    .getResultList();
         }
     }
 
     @Override
-    public List<Post> postsWithSpecialCarModel(String carModel) {
+    public List<Post> findPostsWithSpecialCarBrand(String brand, int limit) {
         try (Session session = sf.openSession()) {
             var criteriaBuilder = session.getCriteriaBuilder();
             var query = criteriaBuilder.createQuery(Post.class);
@@ -129,11 +133,13 @@ public class HblPostRepository implements PostRepository {
 
             root.fetch("car", JoinType.LEFT);
             query.select(root)
-                    .where(criteriaBuilder.equal(root.get("car").get("brand").get("name"), carModel))
+                    .where(criteriaBuilder.equal(root.get("car").get("brand").get("name"), brand))
                     .distinct(true);
 
             Query<Post> sessionQuery = session.createQuery(query);
-            return sessionQuery.getResultList();
+            return sessionQuery
+                    .setMaxResults(limit)
+                    .getResultList();
         }
     }
 }

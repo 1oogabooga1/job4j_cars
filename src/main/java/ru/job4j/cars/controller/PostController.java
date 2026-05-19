@@ -11,8 +11,11 @@ import ru.job4j.cars.model.User;
 import ru.job4j.cars.service.BrandService;
 import ru.job4j.cars.service.EngineService;
 import ru.job4j.cars.service.PostService;
+
+import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Controller
 @AllArgsConstructor
@@ -24,27 +27,40 @@ public class PostController {
 
     private final EngineService engineService;
 
+    private static final List<Integer> AVAILABLE_LIMITS = List.of(1, 5, 10, 15, 20);
+
+    private static final int DEFAULT_LIMIT = 5;
+
     @GetMapping("/allPosts")
     public String getAllPosts(Model model,
-                              @RequestParam(required = false) String brandName) {
+                              @RequestParam(required = false) String brandName,
+                              @RequestParam(defaultValue = "5") int limit) {
         var posts = brandName == null || brandName.isBlank()
-                ? postService.getAllPosts()
-                : postService.postsWithSpecialCarBrand(brandName);
+                ? postService.findAllPosts(limit)
+                : postService.findPostsWithSpecialCarBrand(brandName, limit);
         model.addAttribute("allPosts", posts);
         model.addAttribute("brands", brandService.getAll());
         model.addAttribute("selectedBrand", brandName);
+        model.addAttribute("activePage", "allPosts");
+        addLimit(model, normalizeSelectedLimit(limit));
         return "posts/allPosts";
     }
 
     @GetMapping("/lastDayPosts")
-    public String getPostsForTheLastDay(Model model) {
-        model.addAttribute("postsForTheLastDay", postService.showPostsForTheLastDay());
+    public String getPostsForTheLastDay(Model model,
+                                        @RequestParam(defaultValue = "5") int limit) {
+        model.addAttribute("postsForTheLastDay", postService.findPostsForTheLastDay(limit));
+        model.addAttribute("activePage", "lastDayPosts");
+        addLimit(model, normalizeSelectedLimit(limit));
         return "posts/lastDayPosts";
     }
 
     @GetMapping("/photoPosts")
-    public String getPostsWithPhoto(Model model) {
-        model.addAttribute("postsWithPhoto", postService.postsWithPhoto());
+    public String getPostsWithPhoto(Model model,
+                                    @RequestParam(defaultValue = "5") int limit) {
+        model.addAttribute("postsWithPhoto", postService.findPostsWithPhoto(limit));
+        model.addAttribute("activePage", "photoPosts");
+        addLimit(model, normalizeSelectedLimit(limit));
         return "posts/photoPosts";
     }
 
@@ -65,21 +81,25 @@ public class PostController {
             post.setUser(user);
             postService.create(post, new PhotoDto(file.getOriginalFilename(), file.getBytes()));
             return "redirect:/posts/allPosts";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
+        } catch (IOException e) {
+            model.addAttribute("message", "Could not read uploaded photo");
+            return "errors/400";
         }
     }
 
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable int id, @SessionAttribute User user, Model model) {
-        try {
-            postService.delete(id, user.getId());
-            return "redirect:/posts/allPosts";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
-        }
+        return switch (postService.delete(id, user.getId())) {
+            case NOT_FOUND -> {
+                model.addAttribute("message", "The post was not found");
+                yield  "errors/404";
+            }
+            case FORBIDDEN -> {
+                model.addAttribute("message", "Sorry, only owner can delete this post");
+                yield  "errors/403";
+            }
+            case SUCCESS -> "redirect:/posts/allPosts";
+        };
     }
 
     @GetMapping("/{id}")
@@ -101,24 +121,54 @@ public class PostController {
                            @SessionAttribute User user,
                            Model model) {
         try {
-            postService.edit(post, new PhotoDto(file.getOriginalFilename(), file.getBytes()), user.getId());
-            return "redirect:/posts/allPosts";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
+            return switch (postService.edit(post, new PhotoDto(file.getOriginalFilename(), file.getBytes()), user.getId())) {
+                case NOT_FOUND -> {
+                    model.addAttribute("message", "The post was not found");
+                    yield "errors/404";
+                }
+                case FORBIDDEN -> {
+                    model.addAttribute("message", "Sorry, only owner can edit this post");
+                    yield "errors/403";
+                }
+                case INVALID_DATA -> {
+                    model.addAttribute("message", "Sorry, the data you want to change is invalid");
+                    yield  "errors/400";
+                }
+                case SUCCESS -> "redirect:/posts/allPosts";
+            };
+        } catch (IOException e) {
+            model.addAttribute("message", "Could not read uploaded photo");
+            return "errors/400";
         }
     }
 
     @PostMapping("/sell/{id}")
-    public String sellCar(@PathVariable int id,
-                          @SessionAttribute User user,
-                          Model model) {
-        try {
-            postService.sellCar(id, user.getId());
-            return "redirect:/posts/allPosts";
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-            return "errors/404";
-        }
+    public String markAsSold(@PathVariable int id,
+                             @SessionAttribute User user,
+                             Model model) {
+        return switch (postService.markAsSold(id, user.getId())) {
+            case NOT_FOUND -> {
+                model.addAttribute("message", "The post was not found");
+                yield "errors/404";
+            }
+            case FORBIDDEN -> {
+                model.addAttribute("message", "Sorry, only owner can mark as sold this post");
+                yield "errors/403";
+            }
+            case ALREADY_SOLD -> {
+                model.addAttribute("message", "Sorry, this post is already marked as sold");
+                yield "errors/400";
+            }
+            case SUCCESS -> "redirect:/posts/allPosts";
+        };
+    }
+
+    private void addLimit(Model model, int selectedLimit) {
+        model.addAttribute("selectedLimit", selectedLimit);
+        model.addAttribute("limits", AVAILABLE_LIMITS);
+    }
+
+    private int normalizeSelectedLimit(int limit) {
+        return AVAILABLE_LIMITS.contains(limit) ? limit : DEFAULT_LIMIT;
     }
 }

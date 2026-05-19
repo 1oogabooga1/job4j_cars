@@ -9,19 +9,19 @@ public interface PostRepository {
 
     Post create(Post post);
 
-    void delete(int id);
+    boolean delete(int id);
 
     void edit(Post post);
 
     Optional<Post> findById(int id);
 
-    void sellCar(int id);
+    boolean markAsSold(int id);
 
-    List<Post> getAllPosts();
+    List<Post> findAllPosts(int limit);
 
-    List<Post> showPostsForTheLastDay();
+    List<Post> findPostsForTheLastDay(int limit);
 
-    List<Post> postsWithPhoto();
+    List<Post> findPostsWithPhoto(int limit);
 
-    List<Post> postsWithSpecialCarModel(String carModel);
+    List<Post> findPostsWithSpecialCarBrand(String brand, int limit);
 }

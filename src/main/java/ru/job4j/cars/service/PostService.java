@@ -2,6 +2,9 @@ package ru.job4j.cars.service;
 
 import ru.job4j.cars.dto.PhotoDto;
 import ru.job4j.cars.model.Post;
+import ru.job4j.cars.results.DeletePostResult;
+import ru.job4j.cars.results.EditPostResult;
+import ru.job4j.cars.results.MarkAsSoldPostResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,19 +12,19 @@ import java.util.Optional;
 public interface PostService {
     Post create(Post post, PhotoDto photoDto);
 
-    void delete(int id, int userId);
+    DeletePostResult delete(int id, int userId);
 
-    void edit(Post postFromSession, PhotoDto photo, int userId);
+    EditPostResult edit(Post postFromSession, PhotoDto photo, int userId);
 
-    void sellCar(int id, int userId);
+    MarkAsSoldPostResult markAsSold(int id, int userId);
 
     Optional<Post> findById(int id);
 
-    List<Post> getAllPosts();
+    List<Post> findAllPosts(int limit);
 
-    List<Post> showPostsForTheLastDay();
+    List<Post> findPostsForTheLastDay(int limit);
 
-    List<Post> postsWithPhoto();
+    List<Post> findPostsWithPhoto(int limit);
 
-    List<Post> postsWithSpecialCarBrand(String brand);
+    List<Post> findPostsWithSpecialCarBrand(String brand, int limit);
 }
